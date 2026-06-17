@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { CartItem } from '../types';
-import { X, Trash2, ShoppingBag, ArrowRight, CheckCircle, Clock, Percent, ShieldCheck, Plus, Minus } from 'lucide-react';
+import { X, Trash2, ShoppingBag, ArrowRight, CheckCircle, Clock, Percent, ShieldCheck, Plus, Minus, AlertTriangle, HelpCircle } from 'lucide-react';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -32,6 +32,10 @@ export default function CartDrawer({
   const [zipCity, setZipCity] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('klarna');
   const [generatedOrderId, setGeneratedOrderId] = useState('');
+  
+  // Custom states for demo warning
+  const [showDemoAlert, setShowDemoAlert] = useState(false);
+  const [alertTriggerSource, setAlertTriggerSource] = useState<'checkout' | 'order'>('checkout');
 
   if (!isOpen) return null;
 
@@ -60,10 +64,20 @@ export default function CartDrawer({
     e.preventDefault();
     if (!fullName.trim() || !email.trim() || !street.trim() || !zipCity.trim()) return;
 
-    const randomId = 'OS-' + Math.floor(100000 + Math.random() * 900000);
-    setGeneratedOrderId(randomId);
-    setOrderCompleted(true);
-    setIsCheckingOut(false);
+    setAlertTriggerSource('order');
+    setShowDemoAlert(true);
+  };
+
+  const handleConfirmDemoAction = () => {
+    setShowDemoAlert(false);
+    if (alertTriggerSource === 'checkout') {
+      setIsCheckingOut(true);
+    } else {
+      const randomId = 'OS-' + Math.floor(100000 + Math.random() * 900000);
+      setGeneratedOrderId(randomId);
+      setOrderCompleted(true);
+      setIsCheckingOut(false);
+    }
   };
 
   const handleReset = () => {
@@ -107,12 +121,15 @@ export default function CartDrawer({
           {orderCompleted ? (
             /* ORDER SUCCESS */
             <div className="py-8 text-center flex flex-col items-center gap-4 text-xs">
-              <div className="bg-[#4A5D4E]/10 text-[#4A5D4E] p-4 rounded-full border border-[#7D8E7E]/30 mb-2 animate-bounce">
+              <div className="bg-amber-50 text-amber-700 px-3 py-1 rounded-full border border-amber-200 shadow-xs font-extrabold uppercase tracking-widest text-[9px]">
+                Demo-Bestellung Simuliert
+              </div>
+              <div className="bg-[#4A5D4E]/10 text-[#4A5D4E] p-4 rounded-full border border-[#7D8E7E]/30 mb-2">
                 <CheckCircle className="w-12 h-12 text-[#4A5D4E]" />
               </div>
-              <h3 className="text-lg font-serif font-bold italic text-[#3D4035]">Vielen Dank für Ihren Auftrag!</h3>
+              <h3 className="text-lg font-serif font-bold italic text-[#3D4035]">Erfolgreich getestet!</h3>
               <p className="text-[#6B705C] max-w-sm leading-relaxed -mt-2 font-medium">
-                Ihre Bestellung wurde erfolgreich übermittelt und wird bereits in unserem Lager Kassel kommissioniert. Eine Bestätigungs-E-Mail wurde an <span className="font-bold text-[#4A5D4E]">{email}</span> versandt.
+                Ihre fiktive Testbestellung wurde erfolgreich simuliert. Da dies ein <strong>Demonstrations-Shop</strong> ist, wurde kein Geld abgebucht und es werden keine Artikel versandt.
               </p>
 
               <div className="bg-[#FAF9F6] border border-[#E5E2D9] rounded-2xl p-4.5 w-full text-left space-y-3 font-medium">
@@ -405,7 +422,10 @@ export default function CartDrawer({
             {/* Checkouts toggling triggers */}
             {!isCheckingOut ? (
               <button
-                onClick={() => setIsCheckingOut(true)}
+                onClick={() => {
+                  setAlertTriggerSource('checkout');
+                  setShowDemoAlert(true);
+                }}
                 className="w-full bg-[#D4A373] hover:bg-[#c59262] text-white font-extrabold py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-xs active:scale-95 cursor-pointer uppercase tracking-wider text-xs"
               >
                 <span>Sicher zur Kasse gehen</span>
@@ -427,6 +447,50 @@ export default function CartDrawer({
           </div>
         )}
       </div>
+
+      {/* Demo Warning Popup Modal Overlay */}
+      {showDemoAlert && (
+        <div className="absolute inset-0 z-50 bg-[#3D4035]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 max-w-sm border border-[#E5E2D9] shadow-2xl relative text-xs flex flex-col items-center gap-4 text-center animate-slide-in">
+            <div className="bg-amber-100/80 text-amber-700 p-4 rounded-full border border-amber-200 shadow-sm">
+              <AlertTriangle className="w-8 h-8 text-amber-600 animate-pulse" />
+            </div>
+            
+            <h3 className="text-base md:text-lg font-serif font-bold italic text-[#3D4035] tracking-tight">
+              Test- & Demonstrationsmodus
+            </h3>
+            
+            <div className="space-y-2 text-[#6B705C] font-semibold leading-relaxed">
+              <p>
+                Dies ist ein reiner <strong>Demonstrations-Shop zu Testzwecken (Sandbox)</strong>.
+              </p>
+              <p className="text-[10px] bg-amber-50/75 border border-amber-100 p-3 rounded-xl text-amber-800 font-medium">
+                Es werden <strong>keine echten Zahlungen</strong> abgewickelt, <strong>keine Zahlungsdaten</strong> übermittelt und <strong>keine Waren</strong> versendet.
+              </p>
+              <p>
+                Sie können den gesamten Bestellvorgang und die Solar-Planung risikofrei ausprobieren.
+              </p>
+            </div>
+            
+            <div className="w-full flex flex-col gap-2 pt-2">
+              <button
+                type="button"
+                onClick={handleConfirmDemoAction}
+                className="w-full bg-[#4A5D4E] hover:bg-[#3d4d41] text-white font-extrabold py-3.5 rounded-xl transition cursor-pointer text-xs uppercase tracking-wider"
+              >
+                Als Test simulieren →
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDemoAlert(false)}
+                className="w-full bg-[#FAF9F6] hover:bg-[#F0EFEA] text-[#6B705C] font-bold py-3 rounded-xl border border-[#E5E2D9] transition cursor-pointer text-xs"
+              >
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

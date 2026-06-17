@@ -17,6 +17,44 @@ import LegalView, { LegalTab } from './components/LegalView';
 import BrandHomepage from './components/BrandHomepage';
 import { Sun, SlidersHorizontal, ArrowUpDown, X, Star, Calendar, MessageSquare, Sparkles, Phone, ShieldCheck, ThumbsUp } from 'lucide-react';
 
+const categoryBanners: { [key: string]: { img: string; title: string; desc: string } } = {
+  all: {
+    img: '/src/assets/images/category_hero_banner_1781679455734.jpg',
+    title: 'Die Energiewende smarter gestalten mit OnlineSolar',
+    desc: 'Kombinieren Sie hocheffiziente PV-Systeme, erstklassige Mikrowechselrichter, langlebige Batteriespeicher und Zubehör von führenden Herstellern wie EcoFlow, Anker Solix und Zendure.'
+  },
+  balkonkraftwerke: {
+    img: '/src/assets/images/balkon_solar_1781679645079.jpg',
+    title: 'Plug & Play Balkonkraftwerke für Ihr Zuhause',
+    desc: 'Sparen Sie bares Geld ab Tag eins. Unsere steckerfertigen Komplettsysteme von Anker Solix, EcoFlow und Zendure sind hocheffizient, in 5 Minuten montiert und absolut zukunftssicher.'
+  },
+  solarmodule: {
+    img: '/src/assets/images/solar_modules_1781679661165.jpg',
+    title: 'Premium-Solarmodule für maximalen Solarertrag',
+    desc: 'Ernten Sie Sonnenenergie mit höchster Zuverlässigkeit. Unsere doppelglasigen, bifazialen N-Type Solarmodule von Trina Solar bieten erstklassige Leistung auch bei schwachem Licht.'
+  },
+  wechselrichter: {
+    img: '/src/assets/images/inverter_system_1781679676822.jpg',
+    title: 'Hocheffiziente Wechselrichter & Smart Inverter',
+    desc: 'Die intelligenten Schaltzentralen Ihres Heimkraftwerks. Entdecken Sie erstklassige Mikrowechselrichter von EcoFlow und Zendure oder dreiphasige Hybrid-Wechselrichter von FoxESS.'
+  },
+  speicher: {
+    img: '/src/assets/images/battery_storage_1781679692289.jpg',
+    title: 'Smarte Heimspeicher & Mobile Powerstations',
+    desc: 'Maximieren Sie Ihre Eigenverbrauchsquote. Entdecken Sie sichere, langlebige LiFePO4-Batteriespeichersysteme von Zendure, EcoFlow und Anker Solix mit intelligenter App-Steuerung.'
+  },
+  waermepumpen: {
+    img: '/src/assets/images/homepage_hero_banner_1781679438278.jpg',
+    title: 'Zukunftsfähiges Heizen mit natürlicher Energie',
+    desc: 'Optimieren Sie Ihre Haustechnik. Nutzen Sie den eigenen Solarstrom hocheffizient, um mit einer Luft-Wasser-Wärmepumpe umweltfreundliche Wärme für das gesamte Haus zu erzeugen.'
+  },
+  zubehoer: {
+    img: '/src/assets/images/solar_accessories_1781679706700.jpg',
+    title: 'Smart-Home-Energiemessung & Montagezubehör',
+    desc: 'Perfekte Abstimmung aller Komponenten. Mit hochpräzisen 3-Phasen Smart Metern, intelligenten Steckdosen mit Null-Einspeiseregelung oder sturmsicheren Alu-Balkonhalterungen.'
+  }
+};
+
 export default function App() {
   // Navigation states
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -46,6 +84,9 @@ export default function App() {
   // References
   const plannerSectionRef = useRef<HTMLDivElement>(null);
   const catalogSectionRef = useRef<HTMLDivElement>(null);
+
+  // Dynamic banner lookup based on active category selection 
+  const currentBanner = categoryBanners[activeCategory] || categoryBanners.all;
 
   // Persist cart items in localStorage
   useEffect(() => {
@@ -302,10 +343,18 @@ export default function App() {
             </div>
 
             {/* Elegant Hero Banner Grid Slider (Desktop/Mobile) on default view first */}
-            <div className="bg-[#4A5D4E] text-white rounded-[2rem] mx-4 md:mx-8 my-6 md:my-8 overflow-hidden py-12 md:py-16 px-6 md:px-12 relative border border-[#E5E2D9] shadow-xs">
-              <div className="absolute inset-0 bg-radial-gradient from-[#D4A373]/15 via-transparent to-transparent pointer-events-none" />
+            <div className="bg-slate-950 text-white rounded-[2rem] mx-4 md:mx-8 my-6 md:my-8 overflow-hidden py-12 md:py-16 px-6 md:px-12 relative border border-slate-800 shadow-xl">
+              {/* Background Image Banner */}
+              <img
+                src={currentBanner.img}
+                alt={currentBanner.title}
+                referrerPolicy="no-referrer"
+                className="absolute inset-0 w-full h-full object-cover opacity-35 select-none pointer-events-none"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/85 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-radial-gradient from-[#D4A373]/10 via-transparent to-transparent pointer-events-none" />
               
-              <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
                 
                 {/* Visual Slogan Info */}
                 <div className="lg:col-span-7 flex flex-col gap-5 text-center lg:text-left">
@@ -314,12 +363,16 @@ export default function App() {
                   </span>
                   
                   <h1 className="text-3xl md:text-5xl font-serif font-black tracking-tight text-white leading-tight italic">
-                    Die Energiewende smarter gestalten mit 
-                    <span className="text-[#D4A373] not-italic font-sans font-bold"> OnlineSolar</span>
+                    {currentBanner.title.split('mit')[0]}
+                    {currentBanner.title.includes('mit') && (
+                      <>
+                        mit <span className="text-[#D4A373] not-italic font-sans font-bold">OnlineSolar</span>
+                      </>
+                    )}
                   </h1>
                   
                   <p className="text-xs md:text-sm text-white/85 leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-                    Kombinieren Sie hocheffiziente Bifazial-Solarmodule, erstklassige Mikrowechselrichter, langlebige Batteriespeicher und zukunftsweisende Wärmepumpen von führenden Branchenherstellern nach Ihren Maßen.
+                    {currentBanner.desc}
                   </p>
                   
                   <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-semibold pt-2 text-white/90">
@@ -340,7 +393,7 @@ export default function App() {
                   <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 pt-3">
                     <button
                       onClick={handleNavigateToPlanner}
-                      className="bg-[#D4A373] hover:bg-[#c59262] text-white font-extrabold px-6 py-3.5 rounded-xl transition shadow-xs hover:scale-[1.02] transform text-xs uppercase tracking-wider"
+                      className="bg-[#D4A373] hover:bg-[#c59262] text-white font-extrabold px-6 py-3.5 rounded-xl transition shadow-xs hover:scale-[1.02] transform text-xs uppercase tracking-wider cursor-pointer"
                     >
                       Interaktiven Solarplaner starten
                     </button>
@@ -348,7 +401,7 @@ export default function App() {
                       onClick={() => {
                         catalogSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="bg-white/10 hover:bg-white/15 text-white px-6 py-3.5 rounded-xl border border-white/20 transition text-xs font-bold"
+                      className="bg-white/10 hover:bg-white/15 text-white px-6 py-3.5 rounded-xl border border-white/20 transition text-xs font-bold cursor-pointer"
                     >
                       Zum Katalog scrollen ↓
                     </button>
@@ -360,8 +413,8 @@ export default function App() {
                   <div className="absolute -inset-1.5 bg-gradient-to-tr from-[#D4A373]/30 to-[#7D8E7E]/30 rounded-3xl blur-md opacity-35" />
                   <div className="relative bg-white rounded-3xl overflow-hidden shadow-sm border-8 border-white">
                     <img
-                      src="/src/assets/images/solar_hero_banner_1781675188813.jpg"
-                      alt="OnlineSolar Premium Energie"
+                      src={currentBanner.img}
+                      alt={currentBanner.title}
                       referrerPolicy="no-referrer"
                       className="object-cover w-full h-[280px] sm:h-[340px] opacity-95 hover:scale-[1.03] duration-500"
                     />

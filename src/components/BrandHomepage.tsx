@@ -134,10 +134,18 @@ export default function BrandHomepage({
     <div id="brand-homepage-container" className="font-sans text-[#3D4035] bg-transparent">
       
       {/* 1. HERO SECTOR WITH BRAND CREDENTIALS */}
-      <section className="bg-[#4A5D4E] text-white rounded-[2rem] mx-4 md:mx-8 my-6 overflow-hidden py-14 md:py-20 px-6 md:px-12 relative border border-[#E5E2D9] shadow-xs">
-        <div className="absolute inset-0 bg-radial-gradient from-[#D4A373]/15 via-transparent to-transparent pointer-events-none" />
+      <section className="bg-slate-950 text-white rounded-[2rem] mx-4 md:mx-8 my-6 overflow-hidden py-14 md:py-20 px-6 md:px-12 relative border border-slate-800 shadow-xl">
+        {/* Background Image Banner with smooth dark overlay for excellent readability */}
+        <img
+          src="/src/assets/images/homepage_hero_banner_1781679438278.jpg"
+          alt="OnlineSolar Premium Partner"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 select-none pointer-events-none"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-gradient from-[#D4A373]/10 via-transparent to-transparent pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-center">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-center relative z-10">
           <div className="flex-1 space-y-5 text-center lg:text-left">
             <span className="inline-flex items-center gap-1.5 bg-[#D4A373] text-white font-extrabold text-[10px] tracking-widest uppercase py-1 px-3.5 rounded-full shadow-xs">
               <Award className="w-3.5 h-3.5" /> Offizieller Partner führender Solarmarken

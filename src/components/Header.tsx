@@ -189,7 +189,6 @@ export default function Header({
               id="category-tab-all"
               onClick={() => {
                 setActiveCategory('all');
-                onBackToHome();
               }}
               className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 ${
                 activeCategory === 'all'
@@ -208,7 +207,6 @@ export default function Header({
                   id={`category-tab-${key}`}
                   onClick={() => {
                     setActiveCategory(key);
-                    onBackToHome();
                   }}
                   className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 ${
                     isSelected

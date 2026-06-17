@@ -77,65 +77,54 @@ export default function BrandHomepage({
   // Filter criteria for our brands and partners
   const partners: BrandPartner[] = [
     {
-      id: 'onlinesolar',
-      name: 'OnlineSolar (Eigenmarke)',
-      tagline: 'Die schlüsselfertige Energiewende für jedermann.',
-      description: 'Unsere Premium-Balkonkraftwerke verbinden innovative Technologie mit unschlagbarer Benutzerfreundlichkeit (Plug & Play). Perfekt aufeinander abgestimmt für lückenlos einfaches Sparen ab Tag eins.',
-      logoText: 'OnlineSolar',
-      origin: 'Kassel, Deutschland',
-      specialty: 'Balkonkraftwerke & Montagesätze'
+      id: 'anker-solix',
+      name: 'Anker Solix',
+      tagline: 'Smarte Energie für ein selbstbestimmtes Leben.',
+      description: 'Anker Solix steht für erstklassige, bahnbrechend einfache Plug & Play Solarlösungen. Von hochentwickelten Balkonkraftwerken mit der beliebten Solarbank-Speicherserie bis hin zu modular skalierbaren, smarten Heimspeichersystemen.',
+      logoText: 'Anker Solix',
+      origin: 'Shenzhen / München',
+      specialty: 'Balkonkraftwerke & LFP-Heimspeicher'
     },
     {
-      id: 'trina-jinko',
-      name: 'Trina Solar & JinkoSolar',
-      tagline: 'Die stärksten Modul-Wirkungsgrade auf dem Weltmarkt.',
-      description: 'Mit bifazialer N-Type Doppelglas-Technologie von Trina Solar und hocheleganten Full-Black Designs von JinkoSolar setzen wir auf die globale Spitze im Segment der monokristallinen Solarpaneele.',
-      logoText: 'Trina / Jinko',
-      origin: 'Changzhou / Shangrao',
-      specialty: 'Bifaziale N-Type Doppelglas-Paneele'
+      id: 'ecoflow',
+      name: 'EcoFlow',
+      tagline: 'Die mobile und stationäre Energiezukunft.',
+      description: 'EcoFlow revolutioniert die private Stromspeicherung durch tragbare Powerstations, die innovative PowerStream Balkonkraftwerk-Einbindung und zukunftsfähige Heimspeichersysteme der PowerOcean-Serie.',
+      logoText: 'EcoFlow',
+      origin: 'Düsseldorf / Shenzhen',
+      specialty: 'Powerstations & Hybrid-Inverter'
     },
     {
-      id: 'hoymiles-fronius',
-      name: 'Hoymiles & Fronius',
-      tagline: 'Maximale Wechselrichtereffizienz & zuverlässige Smart-Meters.',
-      description: 'Hoymiles-Mikrowechselrichter mit Direkt-WLAN bieten optimale Einzelmodul-Regelung am Balkon, während Fronius dreiphasige Hybrid-Wechselrichter „Made in Austria“ als Herzstück von Premium-Eigenheimsystemen dienen.',
-      logoText: 'Hoymiles / Fronius',
-      origin: 'Hangzhou / Wels, Österreich',
-      specialty: 'Mikroinverter & Hybrid-Wechselrichter'
+      id: 'zendure',
+      name: 'Zendure',
+      tagline: 'Die Benchmark für smarte Balkonspeicherung.',
+      description: 'Zendure steht für absolute Spitzentechnologie mit der berühmten SolarFlow Serie. Ob der neue, bahnbrechend smarte Hyper 2000 AC-Hub oder die winterfesten AB2000S Zusatz-Akkus mit integrierter Zell-Temperierung.',
+      logoText: 'Zendure',
+      origin: 'Shenzhen / Silicon Valley',
+      specialty: 'Smarte Speichersysteme & Smart-Plug Regler'
     },
     {
-      id: 'byd-pylontech',
-      name: 'BYD & Pylontech',
-      tagline: 'Hochvolt- und Niedervolt-LiFePO4 Speichertechnologie.',
-      description: 'Sichere, kobaltfreie Lithium-Eisenphosphat-Zellen. Das modulare Hochvolt-Stapelsystem von BYD und die universellen 48V-Racks von Pylontech garantieren maximale Langlebigkeit bei höchstem Brandschutz.',
-      logoText: 'BYD / Pylontech',
-      origin: 'Shenzhen / Shanghai',
-      specialty: 'Langlebige Batterie-Speicher'
-    },
-    {
-      id: 'vaillant-panasonic',
-      name: 'Vaillant & Panasonic',
-      tagline: 'Zukunftsfähiges Heizen mit ökologischem R290 Propan.',
-      description: 'Moderne Luft-Wasser-Wärmepumpen für höchste Systemeffizienz selbst im tiefsten Winter. Monoblocksysteme mit natürlichem Kältemittel R290 ermöglichen Vorlauftemperaturen bis 75 °C – auch für Altbauten geeignet.',
-      logoText: 'Vaillant / Panasonic',
-      origin: 'Remscheid / Kadoma, Japan',
-      specialty: 'Natürliche Kältemittel Wärmepumpen'
+      id: 'foxess',
+      name: 'FoxESS',
+      tagline: 'Hocheffiziente PV-Hybridwechselrichter & Hochvolt-Batterieracks.',
+      description: 'FoxESS ist ein weltweit führender Pionier für Wechselrichter- und Batteriespeichersäulen. Die All-in-One und H3-Hybrid-Wechselrichter zeichnen sich durch unübertroffene Schaltzeiten im Notstrombetrieb und erstklassige deutsche Ingenieur-Unterstützung aus.',
+      logoText: 'FoxESS',
+      origin: 'Wuxi, China / Deutschland',
+      specialty: '3-Phasen Hybrid-WR & Speichersäulen'
     }
   ];
 
   // Helper to retrieve brand association
   const getBestsellersForPartner = (partnerId: string): Product[] => {
     switch (partnerId) {
-      case 'onlinesolar':
-        return products.filter((p) => p.brand === 'OnlineSolar').slice(0, 3);
-      case 'trina-jinko':
-        return products.filter((p) => p.brand === 'Trina Solar' || p.brand === 'JinkoSolar').slice(0, 3);
-      case 'hoymiles-fronius':
-        return products.filter((p) => p.brand === 'Hoymiles' || p.brand === 'Fronius').slice(0, 3);
-      case 'byd-pylontech':
-        return products.filter((p) => p.brand === 'BYD' || p.brand === 'Pylontech').slice(0, 3);
-      case 'vaillant-panasonic':
-        return products.filter((p) => p.brand === 'Vaillant' || p.brand === 'Panasonic').slice(0, 3);
+      case 'anker-solix':
+        return products.filter((p) => p.brand === 'Anker Solix').slice(0, 3);
+      case 'ecoflow':
+        return products.filter((p) => p.brand === 'EcoFlow').slice(0, 3);
+      case 'zendure':
+        return products.filter((p) => p.brand === 'Zendure').slice(0, 3);
+      case 'foxess':
+        return products.filter((p) => p.brand === 'FoxESS').slice(0, 3);
       default:
         return [];
     }
@@ -188,20 +177,20 @@ export default function BrandHomepage({
               <span className="text-[10px] uppercase tracking-widest text-[#D4A373] font-bold block border-b border-white/10 pb-2">Unsere Allianzpartner</span>
               <div className="grid grid-cols-2 gap-3 text-xs font-mono font-bold text-white/90">
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col justify-center">
-                  <span className="text-[#D4A373] font-serif italic text-sm">TrinaSolar</span>
-                  <span className="text-[8px] text-white/50 uppercase mt-0.5">Premium Paneele</span>
+                  <span className="text-[#D4A373] font-sans font-bold text-sm">Zendure</span>
+                  <span className="text-[8px] text-white/50 uppercase mt-0.5">SolarFlow</span>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col justify-center">
-                  <span className="font-sans font-extrabold text-sm">Hoymiles</span>
-                  <span className="text-[8px] text-white/50 uppercase mt-0.5">Mikro-Inverter</span>
+                  <span className="font-sans font-extrabold text-sm">Anker Solix</span>
+                  <span className="text-[8px] text-white/50 uppercase mt-0.5">Smart Speicher</span>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col justify-center">
-                  <span className="font-sans font-black text-sm text-[#D4A373]">BYD</span>
-                  <span className="text-[8px] text-white/50 uppercase mt-0.5">Batteriesatz</span>
+                  <span className="font-sans font-black text-sm text-[#D4A373]">EcoFlow</span>
+                  <span className="text-[8px] text-white/50 uppercase mt-0.5">STREAM Serie</span>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col justify-center">
-                  <span className="font-serif italic text-sm">Vaillant</span>
-                  <span className="text-[8px] text-white/50 uppercase mt-0.5">Wärmepumpen</span>
+                  <span className="font-serif italic text-sm">FoxESS</span>
+                  <span className="text-[8px] text-white/50 uppercase mt-0.5">PV-Inverter</span>
                 </div>
               </div>
               <div className="p-3 bg-[#D4A373]/10 border border-[#D4A373]/20 rounded-xl text-center">

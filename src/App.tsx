@@ -217,8 +217,10 @@ export default function App() {
         activeCategory={activeCategory}
         setActiveCategory={(cat) => {
           setActiveCategory(cat);
+          setSelectedProduct(null);
           setActiveLegalTab(null);
           setViewMode('catalog');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         searchQuery={searchQuery}
         setSearchQuery={(q) => {

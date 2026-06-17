@@ -1,0 +1,6 @@
+{
+  "name": "OnlineSolar",
+  "description": "Premium Online Shop für Photovoltaik-Technik, Balkonkraftwerke, Solarmodule, Wechselrichter, Speicher, Wärmepumpen und PV-Zubehör.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -17,39 +17,48 @@ import LegalView, { LegalTab } from './components/LegalView';
 import BrandHomepage from './components/BrandHomepage';
 import { Sun, SlidersHorizontal, ArrowUpDown, X, Star, Calendar, MessageSquare, Sparkles, Phone, ShieldCheck, ThumbsUp } from 'lucide-react';
 
+// Import image assets to ensure they are bundled properly by Vite
+import imgCategoryHeroBanner from './assets/images/category_hero_banner_1781679455734.jpg';
+import imgBalkonSolar from './assets/images/balkon_solar_1781679645079.jpg';
+import imgSolarModules from './assets/images/solar_modules_1781679661165.jpg';
+import imgInverterSystem from './assets/images/inverter_system_1781679676822.jpg';
+import imgBatteryStorage from './assets/images/battery_storage_1781679692289.jpg';
+import imgHomepageHeroBanner from './assets/images/homepage_hero_banner_1781679438278.jpg';
+import imgSolarAccessories from './assets/images/solar_accessories_1781679706700.jpg';
+
 const categoryBanners: { [key: string]: { img: string; title: string; desc: string } } = {
   all: {
-    img: '/src/assets/images/category_hero_banner_1781679455734.jpg',
+    img: imgCategoryHeroBanner,
     title: 'Die Energiewende smarter gestalten mit OnlineSolar',
     desc: 'Kombinieren Sie hocheffiziente PV-Systeme, erstklassige Mikrowechselrichter, langlebige Batteriespeicher und Zubehör von führenden Herstellern wie EcoFlow, Anker Solix und Zendure.'
   },
   balkonkraftwerke: {
-    img: '/src/assets/images/balkon_solar_1781679645079.jpg',
+    img: imgBalkonSolar,
     title: 'Plug & Play Balkonkraftwerke für Ihr Zuhause',
     desc: 'Sparen Sie bares Geld ab Tag eins. Unsere steckerfertigen Komplettsysteme von Anker Solix, EcoFlow und Zendure sind hocheffizient, in 5 Minuten montiert und absolut zukunftssicher.'
   },
   solarmodule: {
-    img: '/src/assets/images/solar_modules_1781679661165.jpg',
+    img: imgSolarModules,
     title: 'Premium-Solarmodule für maximalen Solarertrag',
     desc: 'Ernten Sie Sonnenenergie mit höchster Zuverlässigkeit. Unsere doppelglasigen, bifazialen N-Type Solarmodule von Trina Solar bieten erstklassige Leistung auch bei schwachem Licht.'
   },
   wechselrichter: {
-    img: '/src/assets/images/inverter_system_1781679676822.jpg',
+    img: imgInverterSystem,
     title: 'Hocheffiziente Wechselrichter & Smart Inverter',
     desc: 'Die intelligenten Schaltzentralen Ihres Heimkraftwerks. Entdecken Sie erstklassige Mikrowechselrichter von EcoFlow und Zendure oder dreiphasige Hybrid-Wechselrichter von FoxESS.'
   },
   speicher: {
-    img: '/src/assets/images/battery_storage_1781679692289.jpg',
+    img: imgBatteryStorage,
     title: 'Smarte Heimspeicher & Mobile Powerstations',
     desc: 'Maximieren Sie Ihre Eigenverbrauchsquote. Entdecken Sie sichere, langlebige LiFePO4-Batteriespeichersysteme von Zendure, EcoFlow und Anker Solix mit intelligenter App-Steuerung.'
   },
   waermepumpen: {
-    img: '/src/assets/images/homepage_hero_banner_1781679438278.jpg',
+    img: imgHomepageHeroBanner,
     title: 'Zukunftsfähiges Heizen mit natürlicher Energie',
     desc: 'Optimieren Sie Ihre Haustechnik. Nutzen Sie den eigenen Solarstrom hocheffizient, um mit einer Luft-Wasser-Wärmepumpe umweltfreundliche Wärme für das gesamte Haus zu erzeugen.'
   },
   zubehoer: {
-    img: '/src/assets/images/solar_accessories_1781679706700.jpg',
+    img: imgSolarAccessories,
     title: 'Smart-Home-Energiemessung & Montagezubehör',
     desc: 'Perfekte Abstimmung aller Komponenten. Mit hochpräzisen 3-Phasen Smart Metern, intelligenten Steckdosen mit Null-Einspeiseregelung oder sturmsicheren Alu-Balkonhalterungen.'
   }

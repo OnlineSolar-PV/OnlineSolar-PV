@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import ProductCard from './ProductCard';
+import homepageHero from '../assets/images/homepage_hero_banner_1781679438278.jpg';
 import { 
   ShieldCheck, 
   HelpCircle, 
@@ -137,7 +138,7 @@ export default function BrandHomepage({
       <section className="bg-slate-950 text-white rounded-[2rem] mx-4 md:mx-8 my-6 overflow-hidden py-14 md:py-20 px-6 md:px-12 relative border border-slate-800 shadow-xl">
         {/* Background Image Banner with smooth dark overlay for excellent readability */}
         <img
-          src="/src/assets/images/homepage_hero_banner_1781679438278.jpg"
+          src={homepageHero}
           alt="OnlineSolar Premium Partner"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-40 select-none pointer-events-none"

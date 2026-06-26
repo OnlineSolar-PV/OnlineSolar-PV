@@ -9,17 +9,15 @@ import { ArrowLeft, BookOpen, ShieldCheck, FileText, Scale, Landmark } from 'luc
 export type LegalTab = 'imprint' | 'terms' | 'privacy' | 'revocation';
 
 interface LegalViewProps {
-  initialTab: LegalTab;
+  activeTab: LegalTab;
+  onChangeTab: (tab: LegalTab) => void;
   onBack: () => void;
 }
 
-export default function LegalView({ initialTab, onBack }: LegalViewProps) {
-  const [activeTab, setActiveTab] = React.useState<LegalTab>(initialTab);
-
+export default function LegalView({ activeTab, onChangeTab, onBack }: LegalViewProps) {
   React.useEffect(() => {
-    setActiveTab(initialTab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [initialTab]);
+  }, [activeTab]);
 
   const tabs = [
     { id: 'imprint' as LegalTab, label: 'Impressum', icon: Landmark },
@@ -298,11 +296,19 @@ export default function LegalView({ initialTab, onBack }: LegalViewProps) {
           {tabs.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
+            const tabHref = tab.id === 'imprint' ? '#/impressum'
+              : tab.id === 'terms' ? '#/agb'
+              : tab.id === 'privacy' ? '#/datenschutz'
+              : '#/widerruf';
             return (
-              <button
+              <a
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold transition flex items-center gap-2.5 cursor-pointer ${
+                href={tabHref}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onChangeTab(tab.id);
+                }}
+                className={`w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold transition flex items-center gap-2.5 cursor-pointer decoration-none ${
                   isActive
                     ? 'bg-[#4A5D4E] text-[#FAF9F6] border-l-4 border-[#D4A373]'
                     : 'bg-[#FAF9F6]/40 text-[#6B705C] hover:bg-[#FAF9F6] hover:text-[#3D4035] border-l-4 border-transparent'
@@ -310,7 +316,7 @@ export default function LegalView({ initialTab, onBack }: LegalViewProps) {
               >
                 <IconComponent className={`w-4 h-4 ${isActive ? 'text-[#D4A373]' : 'text-[#6B705C]'}`} />
                 <span>{tab.label}</span>
-              </button>
+              </a>
             );
           })}
         </div>

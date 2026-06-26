@@ -194,9 +194,7 @@ export default function App() {
     }
 
     if (window.location.hash !== targetHash) {
-      window.history.pushState(null, '', targetHash);
-      // Dispatch a hashchange event so GTM and analytics plugins can capture the navigation pageview
-      window.dispatchEvent(new Event('hashchange'));
+      window.location.hash = targetHash;
     }
   }, [activeLegalTab, selectedProduct, viewMode, activeCategory]);
 
@@ -390,7 +388,8 @@ export default function App() {
       <main className="flex-1">
         {activeLegalTab ? (
           <LegalView
-            initialTab={activeLegalTab}
+            activeTab={activeLegalTab}
+            onChangeTab={(tab) => setActiveLegalTab(tab)}
             onBack={() => setActiveLegalTab(null)}
           />
         ) : selectedProduct ? (

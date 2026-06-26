@@ -102,6 +102,104 @@ export default function App() {
     localStorage.setItem('onlinesolar_cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Synchronize browser URL hash back to React state (for back/forward buttons and deep-linking)
+  useEffect(() => {
+    const syncHashToState = () => {
+      const hash = window.location.hash;
+      const cleanHash = hash.replace(/^#/, '');
+
+      if (!cleanHash || cleanHash === '/' || cleanHash === '') {
+        setActiveLegalTab(null);
+        setSelectedProduct(null);
+        setViewMode('brands');
+        setActiveCategory('all');
+        return;
+      }
+
+      if (cleanHash === '/impressum') {
+        setActiveLegalTab('imprint');
+        setSelectedProduct(null);
+        setViewMode('brands');
+        return;
+      }
+      if (cleanHash === '/agb') {
+        setActiveLegalTab('terms');
+        setSelectedProduct(null);
+        setViewMode('brands');
+        return;
+      }
+      if (cleanHash === '/datenschutz') {
+        setActiveLegalTab('privacy');
+        setSelectedProduct(null);
+        setViewMode('brands');
+        return;
+      }
+      if (cleanHash === '/widerruf') {
+        setActiveLegalTab('revocation');
+        setSelectedProduct(null);
+        setViewMode('brands');
+        return;
+      }
+
+      if (cleanHash.startsWith('/produkt/')) {
+        const prodId = cleanHash.split('/produkt/')[1];
+        const foundProduct = PRODUCTS.find(p => p.id === prodId);
+        if (foundProduct) {
+          setActiveLegalTab(null);
+          setSelectedProduct(foundProduct);
+          setViewMode('catalog');
+        }
+        return;
+      }
+
+      if (cleanHash.startsWith('/kategorie/')) {
+        const cat = cleanHash.split('/kategorie/')[1];
+        setActiveLegalTab(null);
+        setSelectedProduct(null);
+        setViewMode('catalog');
+        setActiveCategory(cat);
+        return;
+      }
+
+      if (cleanHash === '/planer') {
+        setActiveLegalTab(null);
+        setSelectedProduct(null);
+        setViewMode('brands');
+        setTimeout(() => {
+          plannerSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+        return;
+      }
+    };
+
+    // Sync on initial mount
+    syncHashToState();
+
+    window.addEventListener('hashchange', syncHashToState);
+    return () => window.removeEventListener('hashchange', syncHashToState);
+  }, []);
+
+  // Synchronize state changes back to the URL Hash
+  useEffect(() => {
+    let targetHash = '#/';
+    if (activeLegalTab) {
+      if (activeLegalTab === 'imprint') targetHash = '#/impressum';
+      else if (activeLegalTab === 'terms') targetHash = '#/agb';
+      else if (activeLegalTab === 'privacy') targetHash = '#/datenschutz';
+      else if (activeLegalTab === 'revocation') targetHash = '#/widerruf';
+    } else if (selectedProduct) {
+      targetHash = `#/produkt/${selectedProduct.id}`;
+    } else if (viewMode === 'catalog') {
+      targetHash = `#/kategorie/${activeCategory}`;
+    }
+
+    if (window.location.hash !== targetHash) {
+      window.history.pushState(null, '', targetHash);
+      // Dispatch a hashchange event so GTM and analytics plugins can capture the navigation pageview
+      window.dispatchEvent(new Event('hashchange'));
+    }
+  }, [activeLegalTab, selectedProduct, viewMode, activeCategory]);
+
   const showNotification = (message: string) => {
     setNotification(message);
     setTimeout(() => {

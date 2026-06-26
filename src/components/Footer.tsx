@@ -175,34 +175,50 @@ export default function Footer({ onNavigateLegal }: FooterProps) {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-[#6B705C]">
           <p className="font-medium text-center sm:text-left">© {currentYear} OnlineSolar GmbH. Alle Rechte vorbehalten. 0% MwSt. für PV-Endabnehmer.</p>
           <div className="flex flex-wrap gap-4 font-bold">
-            <button
+            <a
               id="footer-link-imprint"
-              onClick={() => onNavigateLegal?.('imprint')}
-              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer bg-transparent border-none p-0 text-[#6B705C] font-bold text-xs"
+              href="#/impressum"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal?.('imprint');
+              }}
+              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer text-[#6B705C] font-bold text-xs decoration-none"
             >
               Impressum
-            </button>
-            <button
+            </a>
+            <a
               id="footer-link-privacy"
-              onClick={() => onNavigateLegal?.('privacy')}
-              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer bg-transparent border-none p-0 text-[#6B705C] font-bold text-xs"
+              href="#/datenschutz"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal?.('privacy');
+              }}
+              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer text-[#6B705C] font-bold text-xs decoration-none"
             >
               Datenschutz
-            </button>
-            <button
+            </a>
+            <a
               id="footer-link-terms"
-              onClick={() => onNavigateLegal?.('terms')}
-              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer bg-transparent border-none p-0 text-[#6B705C] font-bold text-xs"
+              href="#/agb"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal?.('terms');
+              }}
+              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer text-[#6B705C] font-bold text-xs decoration-none"
             >
               AGB
-            </button>
-            <button
+            </a>
+            <a
               id="footer-link-revocation"
-              onClick={() => onNavigateLegal?.('revocation')}
-              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer bg-transparent border-none p-0 text-[#6B705C] font-bold text-xs"
+              href="#/widerruf"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal?.('revocation');
+              }}
+              className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer text-[#6B705C] font-bold text-xs decoration-none"
             >
               Widerruf
-            </button>
+            </a>
           </div>
         </div>
       </div>

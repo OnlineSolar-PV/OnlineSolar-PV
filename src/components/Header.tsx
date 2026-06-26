@@ -185,37 +185,41 @@ export default function Header({
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-1 md:gap-2">
           <div className="flex items-center gap-0.5 sm:gap-1 py-1 shrink-0">
             {/* "Alle" option */}
-            <button
+            <a
               id="category-tab-all"
-              onClick={() => {
+              href="#/kategorie/all"
+              onClick={(e) => {
+                e.preventDefault();
                 setActiveCategory('all');
               }}
-              className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 ${
+              className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 cursor-pointer decoration-none ${
                 activeCategory === 'all'
                   ? 'border-[#4A5D4E] text-[#4A5D4E] bg-white/50'
                   : 'border-transparent text-[#6B705C] hover:text-[#4A5D4E] hover:bg-white/30'
               }`}
             >
               Alle Produkte
-            </button>
+            </a>
 
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => {
               const isSelected = activeCategory === key;
               return (
-                <button
+                <a
                   key={key}
                   id={`category-tab-${key}`}
-                  onClick={() => {
+                  href={`#/kategorie/${key}`}
+                  onClick={(e) => {
+                    e.preventDefault();
                     setActiveCategory(key);
                   }}
-                  className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 ${
+                  className={`px-3 md:px-4 py-3 text-xs md:text-sm font-semibold rounded-none border-b-2 transition duration-200 shrink-0 cursor-pointer decoration-none ${
                     isSelected
                       ? 'border-[#4A5D4E] text-[#4A5D4E] bg-white/50'
                       : 'border-transparent text-[#6B705C] hover:text-[#4A5D4E] hover:bg-white/30'
                   }`}
                 >
                   {label}
-                </button>
+                </a>
               );
             })}
           </div>

@@ -14,6 +14,7 @@ import CartDrawer from './components/CartDrawer';
 import ComparisonModal from './components/ComparisonModal';
 import SolarPlanner from './components/SolarPlanner';
 import LegalView, { LegalTab } from './components/LegalView';
+import AdminView from './components/AdminView';
 import BrandHomepage from './components/BrandHomepage';
 import { Sun, SlidersHorizontal, ArrowUpDown, X, Star, Calendar, MessageSquare, Sparkles, Phone, ShieldCheck, ThumbsUp } from 'lucide-react';
 
@@ -65,6 +66,50 @@ const categoryBanners: { [key: string]: { img: string; title: string; desc: stri
 };
 
 export default function App() {
+  // Local admin & custom products state
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('onlinesolar_custom_products');
+    const customList = saved ? JSON.parse(saved) : [];
+    return [...PRODUCTS, ...customList];
+  });
+
+  const [isAdminActive, setIsAdminActive] = useState<boolean>(false);
+
+  const handleAddProduct = (newProd: Product) => {
+    setProducts((prev) => {
+      const exists = prev.some(p => p.id === newProd.id);
+      if (exists) return prev;
+      
+      const updated = [...prev, newProd];
+      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
+      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      return updated;
+    });
+  };
+
+  const handleUpdateProduct = (updatedProd: Product) => {
+    setProducts((prev) => {
+      const updated = prev.map(p => p.id === updatedProd.id ? updatedProd : p);
+      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
+      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      return updated;
+    });
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    setProducts((prev) => {
+      const updated = prev.filter(p => p.id !== productId);
+      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
+      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      return updated;
+    });
+  };
+
+  const handleResetProducts = () => {
+    localStorage.removeItem('onlinesolar_custom_products');
+    setProducts(PRODUCTS);
+  };
+
   // Navigation states
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -113,7 +158,17 @@ export default function App() {
         setSelectedProduct(null);
         setViewMode('brands');
         setActiveCategory('all');
+        setIsAdminActive(false);
         return;
+      }
+
+      if (cleanHash === '/admin') {
+        setIsAdminActive(true);
+        setActiveLegalTab(null);
+        setSelectedProduct(null);
+        return;
+      } else {
+        setIsAdminActive(false);
       }
 
       if (cleanHash === '/impressum') {
@@ -143,7 +198,7 @@ export default function App() {
 
       if (cleanHash.startsWith('/produkt/')) {
         const prodId = cleanHash.split('/produkt/')[1];
-        const foundProduct = PRODUCTS.find(p => p.id === prodId);
+        const foundProduct = products.find(p => p.id === prodId);
         if (foundProduct) {
           setActiveLegalTab(null);
           setSelectedProduct(foundProduct);
@@ -177,7 +232,7 @@ export default function App() {
 
     window.addEventListener('hashchange', syncHashToState);
     return () => window.removeEventListener('hashchange', syncHashToState);
-  }, []);
+  }, [products]);
 
   // Synchronize state changes back to the URL Hash
   useEffect(() => {
@@ -187,6 +242,8 @@ export default function App() {
       else if (activeLegalTab === 'terms') targetHash = '#/agb';
       else if (activeLegalTab === 'privacy') targetHash = '#/datenschutz';
       else if (activeLegalTab === 'revocation') targetHash = '#/widerruf';
+    } else if (isAdminActive) {
+      targetHash = '#/admin';
     } else if (selectedProduct) {
       targetHash = `#/produkt/${selectedProduct.id}`;
     } else if (viewMode === 'catalog') {
@@ -196,7 +253,7 @@ export default function App() {
     if (window.location.hash !== targetHash) {
       window.location.hash = targetHash;
     }
-  }, [activeLegalTab, selectedProduct, viewMode, activeCategory]);
+  }, [activeLegalTab, selectedProduct, viewMode, activeCategory, isAdminActive]);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -304,7 +361,7 @@ export default function App() {
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   // Filtering list items logics
-  const filteredProducts = PRODUCTS.filter((prod) => {
+  const filteredProducts = products.filter((prod) => {
     // 1. Category matched
     if (activeCategory !== 'all' && prod.category !== activeCategory) return false;
 
@@ -346,7 +403,7 @@ export default function App() {
   });
 
   // Extract unique brands for dynamic filters matching
-  const availableBrands = ['all', ...Array.from(new Set(PRODUCTS.map((p) => p.brand)))];
+  const availableBrands = ['all', ...Array.from(new Set(products.map((p) => p.brand)))];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans antialiased">
@@ -386,7 +443,16 @@ export default function App() {
       />
 
       <main className="flex-1">
-        {activeLegalTab ? (
+        {isAdminActive ? (
+          <AdminView
+            products={products}
+            onAddProduct={handleAddProduct}
+            onUpdateProduct={handleUpdateProduct}
+            onDeleteProduct={handleDeleteProduct}
+            onResetProducts={handleResetProducts}
+            onBack={() => setIsAdminActive(false)}
+          />
+        ) : activeLegalTab ? (
           <LegalView
             activeTab={activeLegalTab}
             onChangeTab={(tab) => setActiveLegalTab(tab)}
@@ -409,7 +475,7 @@ export default function App() {
           /* ========================================================================= */
           <>
             <BrandHomepage
-              products={PRODUCTS}
+              products={products}
               onViewDetails={(prod) => {
                 setSelectedProduct(prod);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -739,7 +805,18 @@ export default function App() {
       </main>
 
       {/* FOOTER BADGES */}
-      <Footer onNavigateLegal={(tab) => setActiveLegalTab(tab)} />
+      <Footer 
+        onNavigateLegal={(tab) => {
+          setActiveLegalTab(tab);
+          setIsAdminActive(false);
+        }} 
+        onNavigateAdmin={() => {
+          setIsAdminActive(true);
+          setActiveLegalTab(null);
+          setSelectedProduct(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* PERSISTENT SLIDING WIDGET CART DRAWER */}
       <CartDrawer

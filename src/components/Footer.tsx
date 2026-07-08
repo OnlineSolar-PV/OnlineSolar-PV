@@ -8,9 +8,10 @@ import { Sun, Mail, Phone, MapPin, Shield, RefreshCw, Truck, Lock } from 'lucide
 
 interface FooterProps {
   onNavigateLegal?: (tab: 'imprint' | 'terms' | 'privacy' | 'revocation') => void;
+  onNavigateAdmin?: () => void;
 }
 
-export default function Footer({ onNavigateLegal }: FooterProps) {
+export default function Footer({ onNavigateLegal, onNavigateAdmin }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -218,6 +219,17 @@ export default function Footer({ onNavigateLegal }: FooterProps) {
               className="hover:text-[#4A5D4E] transition duration-200 cursor-pointer text-[#6B705C] font-bold text-xs decoration-none"
             >
               Widerruf
+            </a>
+            <a
+              id="footer-link-admin"
+              href="#/admin"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateAdmin?.();
+              }}
+              className="hover:text-[#4A5D4E] hover:underline transition duration-200 cursor-pointer text-[#4A5D4E] font-bold text-xs decoration-none bg-[#4A5D4E]/10 border border-[#4A5D4E]/25 px-2.5 py-1 rounded-lg"
+            >
+              ⚙ Admin-Bereich
             </a>
           </div>
         </div>

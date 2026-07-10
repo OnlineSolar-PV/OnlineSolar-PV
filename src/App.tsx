@@ -68,9 +68,29 @@ const categoryBanners: { [key: string]: { img: string; title: string; desc: stri
 export default function App() {
   // Local admin & custom products state
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('onlinesolar_custom_products');
-    const customList = saved ? JSON.parse(saved) : [];
-    return [...PRODUCTS, ...customList];
+    const savedV2 = localStorage.getItem('onlinesolar_catalog_products_v2');
+    if (savedV2) {
+      try {
+        return JSON.parse(savedV2);
+      } catch (e) {
+        console.error('Failed to parse catalog products v2', e);
+      }
+    }
+    
+    // Migration: If they have V1 custom products saved, migrate them
+    const savedV1 = localStorage.getItem('onlinesolar_custom_products');
+    if (savedV1) {
+      try {
+        const customList = JSON.parse(savedV1);
+        const merged = [...PRODUCTS, ...customList];
+        localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(merged));
+        return merged;
+      } catch (e) {
+        console.error('Failed to parse catalog products v1', e);
+      }
+    }
+    
+    return PRODUCTS;
   });
 
   const [isAdminActive, setIsAdminActive] = useState<boolean>(false);
@@ -81,8 +101,7 @@ export default function App() {
       if (exists) return prev;
       
       const updated = [...prev, newProd];
-      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
-      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
       return updated;
     });
   };
@@ -90,8 +109,7 @@ export default function App() {
   const handleUpdateProduct = (updatedProd: Product) => {
     setProducts((prev) => {
       const updated = prev.map(p => p.id === updatedProd.id ? updatedProd : p);
-      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
-      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
       return updated;
     });
   };
@@ -99,13 +117,13 @@ export default function App() {
   const handleDeleteProduct = (productId: string) => {
     setProducts((prev) => {
       const updated = prev.filter(p => p.id !== productId);
-      const customOnes = updated.filter(p => !PRODUCTS.some(sp => sp.id === p.id));
-      localStorage.setItem('onlinesolar_custom_products', JSON.stringify(customOnes));
+      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
       return updated;
     });
   };
 
   const handleResetProducts = () => {
+    localStorage.removeItem('onlinesolar_catalog_products_v2');
     localStorage.removeItem('onlinesolar_custom_products');
     setProducts(PRODUCTS);
   };

@@ -102,7 +102,12 @@ export default function App() {
       if (exists) return prev;
       
       const updated = [...prev, newProd];
-      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      try {
+        localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Storage quota exceeded on add', err);
+        alert('Warnung: Der lokale Speicherplatz Ihres Browsers ist voll (Quota Exceeded). Die Änderungen konnten nicht dauerhaft gespeichert werden. Bitte löschen Sie ungenutzte Produkte oder verwenden Sie kleinere Bilder.');
+      }
       return updated;
     });
   };
@@ -110,7 +115,12 @@ export default function App() {
   const handleUpdateProduct = (updatedProd: Product) => {
     setProducts((prev) => {
       const updated = prev.map(p => p.id === updatedProd.id ? updatedProd : p);
-      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      try {
+        localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Storage quota exceeded on update', err);
+        alert('Warnung: Der lokale Speicherplatz Ihres Browsers ist voll (Quota Exceeded). Die Änderungen konnten nicht dauerhaft gespeichert werden. Bitte löschen Sie ungenutzte Produkte oder verwenden Sie kleinere Bilder.');
+      }
       return updated;
     });
   };
@@ -118,7 +128,11 @@ export default function App() {
   const handleDeleteProduct = (productId: string) => {
     setProducts((prev) => {
       const updated = prev.filter(p => p.id !== productId);
-      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      try {
+        localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Storage quota exceeded on delete', err);
+      }
       return updated;
     });
   };

@@ -9,11 +9,12 @@ import { Sun, Sparkles, TrendingUp, Sliders, Battery, ArrowDownToLine } from 'lu
 import { PRODUCTS } from '../data';
 
 interface SolarPlannerProps {
+  products?: Product[];
   onSelectProduct: (product: Product) => void;
   onAddToCart: (product: Product) => void;
 }
 
-export default function SolarPlanner({ onSelectProduct, onAddToCart }: SolarPlannerProps) {
+export default function SolarPlanner({ products = [], onSelectProduct, onAddToCart }: SolarPlannerProps) {
   // Config state
   const [annualConsumption, setAnnualConsumption] = useState(4000);
   const [roofArea, setRoofArea] = useState(45);
@@ -62,30 +63,31 @@ export default function SolarPlanner({ onSelectProduct, onAddToCart }: SolarPlan
 
   const getRecommendedProducts = (): Product[] => {
     const list: Product[] = [];
+    const productsSource = products && products.length > 0 ? products : PRODUCTS;
     
     if (panelsCount <= 4) {
-      const bkwPremium = PRODUCTS.find((p) => p.id === 'bkw-800-premium');
-      const bkwSpeicher = PRODUCTS.find((p) => p.id === 'bkw-1600-speicher');
+      const bkwPremium = productsSource.find((p) => p.id === 'bkw-800-premium');
+      const bkwSpeicher = productsSource.find((p) => p.id === 'bkw-1600-speicher');
       if (bkwPremium) list.push(bkwPremium);
       if (bkwSpeicher) list.push(bkwSpeicher);
     } else {
-      const trina = PRODUCTS.find((p) => p.id === 'mod-trina-440');
+      const trina = productsSource.find((p) => p.id === 'mod-trina-440');
       if (trina) list.push(trina);
 
       if (systemPowerKWp > 4) {
-        const fronius = PRODUCTS.find((p) => p.id === 'wr-fronius-10');
+        const fronius = productsSource.find((p) => p.id === 'wr-fronius-10');
         if (fronius) list.push(fronius);
       } else {
-        const hoymiles = PRODUCTS.find((p) => p.id === 'wr-hoymiles-800');
+        const hoymiles = productsSource.find((p) => p.id === 'wr-hoymiles-800');
         if (hoymiles) list.push(hoymiles);
       }
 
       if (hasBattery) {
-        const byd = PRODUCTS.find((p) => p.id === 'bat-byd-77');
+        const byd = productsSource.find((p) => p.id === 'bat-byd-77');
         if (byd) list.push(byd);
       }
 
-      const shelly = PRODUCTS.find((p) => p.id === 'zub-shelly-pro3em');
+      const shelly = productsSource.find((p) => p.id === 'zub-shelly-pro3em');
       if (shelly) list.push(shelly);
     }
     

@@ -123,17 +123,49 @@ export default function AdminView({
 
     Array.from(files).forEach((file: File) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setImages(prev => [...prev, reader.result as string]);
-        }
+      reader.onload = (event) => {
+        if (typeof event.target?.result !== 'string') return;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Max dimensions
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.75);
+            setImages(prev => [...prev, compressed]);
+          } else {
+            setImages(prev => [...prev, event.target?.result as string]);
+          }
+        };
+        img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
     });
     
     // Reset file input
     e.target.value = '';
-    showSuccess('Bild erfolgreich hochgeladen und lokal konvertiert!');
+    showSuccess('Bild hochgeladen, für Web optimiert & komprimiert!');
   };
 
   const addImageFromUrl = () => {

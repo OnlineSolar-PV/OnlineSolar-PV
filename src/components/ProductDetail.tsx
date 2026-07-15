@@ -37,6 +37,10 @@ export default function ProductDetail({
   isComparing,
 }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(product.images[0]);
+
+  React.useEffect(() => {
+    setSelectedImage(product.images[0]);
+  }, [product.id, product.images]);
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>(() => {
     const initial: { [key: string]: string } = {};

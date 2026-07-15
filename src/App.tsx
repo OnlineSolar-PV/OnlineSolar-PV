@@ -16,6 +16,7 @@ import SolarPlanner from './components/SolarPlanner';
 import LegalView, { LegalTab } from './components/LegalView';
 import AdminView from './components/AdminView';
 import BrandHomepage from './components/BrandHomepage';
+import CookieBanner from './components/CookieBanner';
 import { Sun, SlidersHorizontal, ArrowUpDown, X, Star, Calendar, MessageSquare, Sparkles, Phone, ShieldCheck, ThumbsUp } from 'lucide-react';
 
 // Import image assets to ensure they are bundled properly by Vite
@@ -853,6 +854,15 @@ export default function App() {
         compareList={compareList}
         onRemoveFromCompare={handleRemoveFromCompare}
         onAddToCart={(p) => handleAddToCart(p, 1)}
+      />
+
+      {/* COMPLIANT COOKIE CONSENT BANNER */}
+      <CookieBanner 
+        onNavigateLegal={(tab) => {
+          setActiveLegalTab(tab);
+          setIsAdminActive(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} 
       />
     </div>
   );

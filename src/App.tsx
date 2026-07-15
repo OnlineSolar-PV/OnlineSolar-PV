@@ -143,6 +143,16 @@ export default function App() {
     setProducts(PRODUCTS);
   };
 
+  const handleImportProducts = (importedList: Product[]) => {
+    setProducts(importedList);
+    try {
+      localStorage.setItem('onlinesolar_catalog_products_v2', JSON.stringify(importedList));
+    } catch (err) {
+      console.error('Storage quota exceeded on import', err);
+      alert('Warnung: Der lokale Speicherplatz Ihres Browsers ist voll (Quota Exceeded). Der Katalog konnte nicht vollständig in den Browser geladen werden.');
+    }
+  };
+
   // Navigation states
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -483,6 +493,7 @@ export default function App() {
             onUpdateProduct={handleUpdateProduct}
             onDeleteProduct={handleDeleteProduct}
             onResetProducts={handleResetProducts}
+            onImportProducts={handleImportProducts}
             onBack={() => setIsAdminActive(false)}
           />
         ) : activeLegalTab ? (

@@ -4,7 +4,7 @@ import { CATEGORY_LABELS } from '../data';
 import { 
   Plus, Trash2, Edit2, Save, Upload, X, ArrowLeft, Image as ImageIcon, 
   Settings, AlertCircle, Database, Eye, CheckCircle, RefreshCw,
-  Lock, Unlock, EyeOff, Key, ShieldAlert
+  Lock, Unlock, EyeOff, Key, ShieldAlert, Download
 } from 'lucide-react';
 
 interface AdminViewProps {
@@ -13,6 +13,7 @@ interface AdminViewProps {
   onUpdateProduct: (product: Product) => void;
   onDeleteProduct: (id: string) => void;
   onResetProducts: () => void;
+  onImportProducts: (products: Product[]) => void;
   onBack: () => void;
 }
 
@@ -22,6 +23,7 @@ export default function AdminView({
   onUpdateProduct,
   onDeleteProduct,
   onResetProducts,
+  onImportProducts,
   onBack
 }: AdminViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<'list' | 'add' | 'edit' | 'settings'>('list');
@@ -72,6 +74,43 @@ export default function AdminView({
   const showSuccess = (msg: string) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(null), 4000);
+  };
+
+  const handleExportJSON = () => {
+    try {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `onlinesolar-katalog-export-${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showSuccess('Katalog erfolgreich als JSON heruntergeladen!');
+    } catch (err) {
+      alert('Fehler beim Exportieren des Katalogs.');
+    }
+  };
+
+  const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileReader = new FileReader();
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    fileReader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].id) {
+          onImportProducts(parsed);
+          showSuccess(`Katalog erfolgreich importiert! ${parsed.length} Produkte aktiv.`);
+        } else {
+          alert('Fehler: Die Datei hat kein gültiges Onlinesolar-Katalog-Format.');
+        }
+      } catch (err) {
+        alert('Fehler beim Parsen der JSON-Datei. Stellen Sie sicher, dass es sich um eine valide JSON-Datei handelt.');
+      }
+    };
+    fileReader.readAsText(file);
+    e.target.value = ''; // Reset input
   };
 
   const resetForm = () => {
@@ -1064,87 +1103,168 @@ export default function AdminView({
 
       {/* ======================= TAB 4: SETTINGS / SECURITY ======================= */}
       {activeSubTab === 'settings' && (
-        <div className="bg-white border border-[#E5E2D9] rounded-3xl p-6 md:p-8 shadow-2xs max-w-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-3 border-b border-slate-100">
-            <Lock className="w-5 h-5 text-[#D4A373]" />
-            <h3 className="text-base font-serif font-black text-[#4A5D4E]">
-              Admin-Sicherheitseinstellungen
-            </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Card 1: Security/Password */}
+          <div className="bg-white border border-[#E5E2D9] rounded-3xl p-6 md:p-8 shadow-2xs">
+            <div className="flex items-center gap-3 mb-6 pb-3 border-b border-slate-100">
+              <Lock className="w-5 h-5 text-[#D4A373]" />
+              <h3 className="text-base font-serif font-black text-[#4A5D4E]">
+                Admin-Sicherheitseinstellungen
+              </h3>
+            </div>
+
+            <p className="text-xs text-[#6B705C] mb-6 leading-relaxed">
+              Hier können Sie das Passwort für diesen lokalen Admin-Bereich ändern. 
+              Das geänderte Passwort wird sicher im <strong className="text-[#4A5D4E]">LocalStorage</strong> Ihres Browsers gespeichert.
+            </p>
+
+            <form onSubmit={handlePasswordChange} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-600">Aktuelles Admin-Passwort <span className="text-rose-500">*</span>:</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Aktuelles Passwort"
+                    className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
+                    value={oldPasswordInput}
+                    onChange={(e) => setOldPasswordInput(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-600">Neues Admin-Passwort <span className="text-rose-500">*</span>:</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Mindestens 4 Zeichen"
+                    className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
+                    value={newPasswordInput}
+                    onChange={(e) => setNewPasswordInput(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-slate-600">Neues Passwort bestätigen <span className="text-rose-500">*</span>:</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Gleiches Passwort erneut eingeben"
+                    className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
+                    value={confirmPasswordInput}
+                    onChange={(e) => setConfirmPasswordInput(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {passwordError && (
+                <div className="p-3 bg-rose-50 border border-rose-150 rounded-xl text-rose-700 text-xs font-bold flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{passwordError}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOldPasswordInput('');
+                    setNewPasswordInput('');
+                    setConfirmPasswordInput('');
+                    setPasswordError(null);
+                    setActiveSubTab('list');
+                  }}
+                  className="bg-slate-100 hover:bg-slate-250 text-slate-600 text-xs font-bold py-3 px-6 rounded-xl transition cursor-pointer"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 bg-[#4A5D4E] hover:bg-[#3d4d41] text-white text-xs font-extrabold py-3 px-6 rounded-xl transition shadow-xs cursor-pointer"
+                >
+                  <Save className="w-4 h-4" /> Passwort aktualisieren
+                </button>
+              </div>
+            </form>
           </div>
 
-          <p className="text-xs text-[#6B705C] mb-6 leading-relaxed">
-            Hier können Sie das Passwort für diesen lokalen Admin-Bereich ändern. 
-            Das geänderte Passwort wird sicher im <strong className="text-[#4A5D4E]">LocalStorage</strong> Ihres Browsers gespeichert.
-          </p>
+          {/* Card 2: Backup & Sync */}
+          <div className="bg-white border border-[#E5E2D9] rounded-3xl p-6 md:p-8 shadow-2xs">
+            <div className="flex items-center gap-3 mb-6 pb-3 border-b border-slate-100">
+              <Database className="w-5 h-5 text-[#D4A373]" />
+              <h3 className="text-base font-serif font-black text-[#4A5D4E]">
+                Katalog-Sicherung & Übertragung
+              </h3>
+            </div>
 
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-600">Aktuelles Admin-Passwort <span className="text-rose-500">*</span>:</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Aktuelles Passwort"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
-                  value={oldPasswordInput}
-                  onChange={(e) => setOldPasswordInput(e.target.value)}
-                />
+            <p className="text-xs text-[#6B705C] mb-4 leading-relaxed">
+              Ihre vorgenommenen Änderungen werden aktuell <strong>nur lokal in diesem Browser</strong> gespeichert.
+            </p>
+
+            <div className="bg-[#FAF9F6] border border-[#E5E2D9] rounded-2xl p-4 mb-6 space-y-3 text-xs">
+              <div>
+                <p className="font-semibold text-[#4A5D4E] flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-[#7D8E7E] rounded-full" />
+                  Szenario A: Übertragung auf andere Geräte
+                </p>
+                <p className="text-[11px] text-[#6B705C] pl-3.5 leading-relaxed mt-1">
+                  Exportieren Sie Ihren Katalog hier als JSON-Datei und importieren Sie ihn auf einem anderen Gerät oder Browser.
+                </p>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-600">Neues Admin-Passwort <span className="text-rose-500">*</span>:</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Mindestens 4 Zeichen"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
-                  value={newPasswordInput}
-                  onChange={(e) => setNewPasswordInput(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-600">Neues Passwort bestätigen <span className="text-rose-500">*</span>:</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Gleiches Passwort erneut eingeben"
-                  className="w-full bg-[#FAF9F6] border border-[#E5E2D9] rounded-xl p-3 text-xs focus:outline-none focus:border-[#4A5D4E] font-semibold"
-                  value={confirmPasswordInput}
-                  onChange={(e) => setConfirmPasswordInput(e.target.value)}
-                />
+              <div>
+                <p className="font-semibold text-[#4A5D4E] flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-[#D4A373] rounded-full" />
+                  Szenario B: Dauerhaft im Code festschreiben (Empfohlen)
+                </p>
+                <p className="text-[11px] text-[#6B705C] pl-3.5 leading-relaxed mt-1">
+                  Herunterladen Sie den Katalog und senden Sie uns die JSON-Datei direkt im Chat. Wir schreiben Ihre Produkte dann permanent in den Code der Seite, sodass sie für <strong>jeden Besucher standardmäßig</strong> geladen werden.
+                </p>
               </div>
             </div>
 
-            {passwordError && (
-              <div className="p-3 bg-rose-50 border border-rose-150 rounded-xl text-rose-700 text-xs font-bold flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
-                <span>{passwordError}</span>
-              </div>
-            )}
-
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+            <div className="space-y-3">
               <button
                 type="button"
-                onClick={() => {
-                  setOldPasswordInput('');
-                  setNewPasswordInput('');
-                  setConfirmPasswordInput('');
-                  setPasswordError(null);
-                  setActiveSubTab('list');
-                }}
-                className="bg-slate-100 hover:bg-slate-250 text-slate-600 text-xs font-bold py-3 px-6 rounded-xl transition cursor-pointer"
+                onClick={handleExportJSON}
+                className="w-full flex items-center justify-center gap-2 bg-[#4A5D4E] hover:bg-[#3d4d41] text-white text-xs font-extrabold py-3.5 px-4 rounded-xl transition shadow-xs cursor-pointer"
               >
-                Abbrechen
+                <Download className="w-4 h-4" /> Katalog exportieren (JSON)
               </button>
-              <button
-                type="submit"
-                className="flex items-center gap-2 bg-[#4A5D4E] hover:bg-[#3d4d41] text-white text-xs font-extrabold py-3 px-6 rounded-xl transition shadow-xs cursor-pointer"
-              >
-                <Save className="w-4 h-4" /> Passwort aktualisieren
-              </button>
+
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImportJSON}
+                  id="import-catalog-input"
+                  className="hidden"
+                />
+                <label
+                  htmlFor="import-catalog-input"
+                  className="w-full flex items-center justify-center gap-2 bg-[#FAF9F6] hover:bg-[#F0EFEA] border border-[#E5E2D9] text-[#4A5D4E] text-xs font-extrabold py-3.5 px-4 rounded-xl transition cursor-pointer"
+                >
+                  <Upload className="w-4 h-4" /> Katalog importieren (JSON)
+                </label>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
+                <span className="text-[11px] font-bold text-slate-500">Werkszustand:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm('Möchten Sie wirklich alle benutzerdefinierten Änderungen löschen und den Katalog auf den Originalzustand zurücksetzen?')) {
+                      onResetProducts();
+                      showSuccess('Der Produktkatalog wurde auf den Werkszustand zurückgesetzt.');
+                    }
+                  }}
+                  className="text-[11px] font-bold text-rose-600 hover:underline flex items-center gap-1"
+                >
+                  <RefreshCw className="w-3 h-3 animate-spin-slow" /> Alle Änderungen verwerfen
+                </button>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
       )}
 
